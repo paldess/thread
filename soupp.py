@@ -13,7 +13,7 @@ base = bd.new_books['book24-психология']
 url = 'https://book24.ru'
 params = {'q': 'психология'}
 headers = {'user_ahent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.159 Safari/537.36'}
-# books = []
+books = []
 
 
 
@@ -25,26 +25,38 @@ async def pages(dom):
     price = int(prices[0])
     currency = prices[1]
     book = {'name': name, 'price': price, 'currency': currency}
-    # books.append({'name': name, 'price': price, 'currency': currency})
+    books.append({'name': name, 'price': price, 'currency': currency})
     base.insert_one(book)
     print(name)
 
 
-x = 1
-while True:
-
+async def pages_1(x):
     response = requests.get(f'{url}/search/page-{x}', params=params, headers=headers)
     if response.status_code != 200:
-        break
+        return 1
     dom = html.fromstring(response.text)
     links = dom.xpath('//div[@class="product-list__item"]//a[@class="product-card__image-link smartLink"]/@href')
     x += 1
-
     for i in range(len(links)):
-        loop = asyncio.get_event_loop()
-        task = loop.run_until_complete(pages(links[i]))
+        loopp = asyncio.new_event_loop()
+        task = loopp.run_until_complete(pages(links[i]))
 
     print(time.time()-time_)
+
+
+
+
+x = 1
+while True:
+    loopp = asyncio.get_event_loop()
+    task = loopp.run_until_complete(pages_1(x))
+
+    if task == 1:
+        break
+    x += 1
+
+
+
 
 
 
