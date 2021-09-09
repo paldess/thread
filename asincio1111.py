@@ -27,18 +27,18 @@ async def printt1(extra):
 
 
 
-potok = asyncio.get_event_loop()
+loop = asyncio.get_event_loop()
 # potoky = [potok.create_task(printt(1)),
 #           potok.create_task(printt1(2))]
 
 potoky = [printt1(extra)]
 for i in range(100000):
     x = random.randint(1, 10000)/100000
-    potoky.append(potok.create_task(printt(x)))
+    potoky.append(loop.create_task(printt(x)))
 
 
-potok.run_until_complete(asyncio.wait(potoky))
-potok.close()
+loop.run_until_complete(asyncio.wait(potoky))
+loop.close()
 a = pd.DataFrame(extra, columns=['n'])
 ss = time.time()-start_time
 print(('%s seconds'%ss))
